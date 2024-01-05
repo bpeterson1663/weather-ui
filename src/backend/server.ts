@@ -9,7 +9,7 @@ import { z } from "zod"
 import { fetchLocationData } from "./location"
 import { fetchWeatherData } from "./weatherapi"
 
-const GEOCODE_API_URL = "https://geoco de.maps.co/search"
+const GEOCODE_API_URL = "https://geocode.maps.co/search"
 const WEATHER_API_URL = "https://api.open-meteo.com/v1/forecast"
 const HTTP_CLIENT = axios
 
@@ -73,7 +73,9 @@ server.get("/", async(req, res) => {
   try { 
    const { location } = locationSchema.parse(params)
    const locationInfo = await fetchLocationData(HTTP_CLIENT, GEOCODE_API_URL, location)
+   console.log(locationInfo)
    const weatherInfo = await fetchWeatherData(HTTP_CLIENT, WEATHER_API_URL, locationInfo.lat, locationInfo.lon)
+   console.log(weatherInfo)
 
    const rendered = templates.render("weather.njk", {
      environment,
@@ -82,12 +84,11 @@ server.get("/", async(req, res) => {
      weather: {
        ...weatherInfo,
        conditionImg: weatherCodeToImage(weatherInfo.weathercode),
-       condition: weatherInfo.condition,
+       condition: weatherInfo.condition(),
        lowTemp: weatherInfo.lowTemp(),
        highTemp: weatherInfo.highTemp(), 
      }
    })
-
    await res.header("Content-Type", "text/html; charset=utf-8").send(rendered)
   } catch(err) {
    console.error(err)
