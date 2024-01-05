@@ -88,7 +88,7 @@ export class CurrentWeather {
   }
 }
 
-export async function fetchWeatherData(apiUrl: string, lat: string, long: string): Promise<CurrentWeather> {
+export async function fetchWeatherData(axios: AxiosStatic, apiUrl: string, lat: string, long: string): Promise<CurrentWeather> {
   const options = {
     method: "GET",
     url: apiUrl,
