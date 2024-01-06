@@ -1,3 +1,7 @@
+import axios from "axios"
+import * as MockAdapter from "axios-mock-adapter"
+import { fetchLocationData } from "./location";
+
 const SAMPLE_API_RESPONSE = [
   {
     place_id: 287781008,
@@ -28,3 +32,12 @@ const SAMPLE_API_RESPONSE = [
     importance: 0.8181396344174214
   },
 ];
+
+it("should convert API response", async () => {
+  const httpClient = new MockAdapter(axios)
+  const GEOCODE_API_URL = "https://geocode.maps.co/search"
+
+  httpClient.onGet(GEOCODE_API_URL, { params: { q: "test"}})
+
+  await fetchLocationData(axios, GEOCODE_API_URL, "test")
+})
