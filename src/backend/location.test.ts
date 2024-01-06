@@ -37,7 +37,25 @@ it("should convert API response", async () => {
   const httpClient = new MockAdapter(axios)
   const GEOCODE_API_URL = "https://geocode.maps.co/search"
 
-  httpClient.onGet(GEOCODE_API_URL, { params: { q: "test"}})
+  httpClient.onGet(GEOCODE_API_URL, { params: { q: "test"}}).reply(200, SAMPLE_API_RESPONSE)
 
   await fetchLocationData(axios, GEOCODE_API_URL, "test")
+})
+
+it("throws error when response is not 200", async () => {
+  const httpClient = new MockAdapter(axios)
+  const GEOCODE_API_URL = "https://geocode.maps.co/search"
+
+  httpClient.onGet(GEOCODE_API_URL, { params: { q: "test"}}).reply(400, SAMPLE_API_RESPONSE)
+
+  await expect(fetchLocationData(axios, GEOCODE_API_URL, "test")).rejects.toThrow()
+})
+
+it("throws erro when response changes", async () => {
+  const httpClient = new MockAdapter(axios)
+  const GEOCODE_API_URL = "https://geocode.maps.co/search"
+
+  httpClient.onGet(GEOCODE_API_URL, { params: { q: "test"}}).reply(400, {})
+
+  await expect(fetchLocationData(axios, GEOCODE_API_URL, "test")).rejects.toThrow()
 })
